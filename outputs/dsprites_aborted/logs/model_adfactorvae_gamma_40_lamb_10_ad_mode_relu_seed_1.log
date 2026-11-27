@@ -1,0 +1,13 @@
+[adfactorvae_g40_l10_conv2_relu_s1] it 5000 rec 135.8 kl 13.33 tc 0.123 L_AD 0.026 active 8 (184s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 10000 rec 104.6 kl 10.99 tc 0.046 L_AD 0.001 active 3 (367s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 15000 rec 102.8 kl 11.12 tc 0.015 L_AD 0.000 active 3 (551s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 20000 rec 110.3 kl 10.79 tc 0.007 L_AD 0.000 active 3 (735s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 25000 rec 96.4 kl 17.62 tc 0.012 L_AD 0.004 active 6 (913s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 30000 rec 89.2 kl 13.43 tc 0.009 L_AD 0.001 active 4 (1031s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 35000 rec 84.8 kl 12.73 tc 0.021 L_AD 0.000 active 4 (1215s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 40000 rec 87.2 kl 12.28 tc 0.027 L_AD 0.000 active 4 (1399s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 45000 rec 77.0 kl 15.59 tc 0.045 L_AD 0.002 active 7 (1583s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 50000 rec 71.6 kl 14.61 tc 0.078 L_AD 0.001 active 6 (1768s)
+[adfactorvae_g40_l10_conv2_relu_s1] EVAL it 50000: disentanglement 0.812  recon 72.84  active 9
+[adfactorvae_g40_l10_conv2_relu_s1] it 55000 rec 70.6 kl 16.69 tc 0.082 L_AD 0.000 active 6 (1952s)
+[adfactorvae_g40_l10_conv2_relu_s1] it 60000 rec 71.3 kl 15.49 tc 0.078 L_AD 0.000 active 5 (2105s)

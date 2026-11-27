@@ -1,0 +1,3 @@
+[ucsd seed 1] paper conv2 raw 0.360 blur_norm 0.386 | recon raw 0.902
+[ucsd seed 2] paper conv2 raw 0.577 blur_norm 0.659 | recon raw 0.904
+[ucsd seed 3] paper conv2 raw 0.539 blur_norm 0.549 | recon raw 0.906

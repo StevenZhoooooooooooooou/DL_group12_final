@@ -1,0 +1,98 @@
+[carpet] train 280  test 117  anomalous px 0.0160
+  it   1000/4000  loss  127877.84  rec  127867.34  kl   10.51  (141s)
+  it   2000/4000  loss  127797.84  rec  127783.11  kl   14.73  (295s)
+  it   3000/4000  loss  128022.44  rec  128002.78  kl   19.65  (441s)
+  it   4000/4000  loss  128289.01  rec  128265.33  kl   23.68  (565s)
+[carpet] recon AUROC 0.546 | paper-setting (layer2,mu,relu) 0.498 | best attention 0.669  (827s)
+[grid] train 264  test 78  anomalous px 0.0069
+  it   1000/4000  loss  134961.62  rec  134951.91  kl    9.72  (217s)
+  it   2000/4000  loss  134137.97  rec  134129.95  kl    8.02  (433s)
+  it   3000/4000  loss  134415.19  rec  134401.44  kl   13.75  (649s)
+  it   4000/4000  loss  133571.64  rec  133527.62  kl   44.02  (860s)
+[grid] recon AUROC 0.607 | paper-setting (layer2,mu,relu) 0.488 | best attention 0.642  (944s)
+[leather] train 245  test 124  anomalous px 0.0065
+  it   1000/4000  loss  116430.48  rec  116422.50  kl    7.98  (216s)
+  it   2000/4000  loss  115813.36  rec  115805.73  kl    7.64  (430s)
+  it   3000/4000  loss  115661.09  rec  115652.94  kl    8.16  (645s)
+  it   4000/4000  loss  115408.95  rec  115401.47  kl    7.49  (825s)
+[leather] recon AUROC 0.838 | paper-setting (layer2,mu,relu) 0.352 | best attention 0.873  (1086s)
+[tile] train 230  test 117  anomalous px 0.0704
+  it   1000/4000  loss  135081.83  rec  135051.75  kl   30.08  (226s)
+  it   2000/4000  loss  134400.81  rec  134335.91  kl   64.91  (492s)
+  it   3000/4000  loss  134319.73  rec  134242.69  kl   77.05  (760s)
+  it   4000/4000  loss  133763.42  rec  133682.59  kl   80.83  (1029s)
+[tile] recon AUROC 0.522 | paper-setting (layer2,mu,relu) 0.430 | best attention 0.845  (1451s)
+[wood] train 247  test 79  anomalous px 0.0386
+  it   1000/4000  loss  129140.12  rec  129109.25  kl   30.86  (298s)
+[carpet] done, skipping
+[grid] done, skipping
+[leather] done, skipping
+[tile] done, skipping
+[wood] train 247  test 79  anomalous px 0.0386
+  it   1000/4000  loss  129139.30  rec  129108.37  kl   30.93  (234s)
+  it   2000/4000  loss  128587.53  rec  128551.41  kl   36.12  (456s)
+  it   3000/4000  loss  128565.20  rec  128523.14  kl   42.06  (679s)
+  it   4000/4000  loss  128282.71  rec  128238.86  kl   43.85  (902s)
+[wood] recon AUROC 0.677 | paper-setting (layer2,mu,relu) 0.584 | best attention 0.724  (1006s)
+[bottle] train 209  test 83  anomalous px 0.0578
+  it   1000/4000  loss   70780.48  rec   70736.75  kl   43.73  (222s)
+  it   2000/4000  loss   70526.41  rec   70481.28  kl   45.14  (445s)
+  it   3000/4000  loss   70454.66  rec   70407.95  kl   46.70  (667s)
+  it   4000/4000  loss   70595.28  rec   70548.29  kl   46.99  (886s)
+[bottle] recon AUROC 0.881 | paper-setting (layer2,mu,relu) 0.480 | best attention 0.728  (984s)
+[cable] train 224  test 150  anomalous px 0.0287
+[carpet] done, skipping
+[grid] done, skipping
+[leather] done, skipping
+[tile] done, skipping
+[wood] done, skipping
+[bottle] done, skipping
+[cable] train 224  test 150  anomalous px 0.0287
+  it   1000/4000  loss  115841.45  rec  115751.11  kl   90.34  (272s)
+  it   2000/4000  loss  115489.56  rec  115394.67  kl   94.89  (523s)
+  it   3000/4000  loss  114642.57  rec  114547.05  kl   95.53  (791s)
+  it   4000/4000  loss  115061.05  rec  114963.16  kl   97.90  (1058s)
+[cable] recon AUROC 0.816 | paper-setting (layer2,mu,relu) 0.810 | best attention 0.810  (1241s)
+[capsule] train 219  test 132  anomalous px 0.0092
+  it   1000/4000  loss   96578.27  rec   96533.77  kl   44.50  (127s)
+  it   2000/4000  loss   94611.35  rec   94573.07  kl   38.28  (253s)
+  it   3000/4000  loss   94105.73  rec   94070.23  kl   35.50  (379s)
+  it   4000/4000  loss   96035.13  rec   96001.23  kl   33.91  (505s)
+[capsule] recon AUROC 0.882 | paper-setting (layer2,mu,relu) 0.599 | best attention 0.753  (623s)
+[hazelnut] done, skipping
+[metal_nut] train 220  test 115  anomalous px 0.1172
+  it   1000/4000  loss   92969.26  rec   92909.85  kl   59.41  (165s)
+  it   2000/4000  loss   92268.12  rec   92201.98  kl   66.13  (372s)
+  it   3000/4000  loss   92570.19  rec   92502.23  kl   67.95  (579s)
+  it   4000/4000  loss   92220.60  rec   92150.78  kl   69.82  (786s)
+[metal_nut] recon AUROC 0.864 | paper-setting (layer2,mu,relu) 0.787 | best attention 0.802  (1164s)
+[pill] train 267  test 167  anomalous px 0.0336
+  it   1000/4000  loss   78971.57  rec   78944.38  kl   27.19  (206s)
+  it   2000/4000  loss   78272.89  rec   78251.69  kl   21.20  (411s)
+  it   3000/4000  loss   79239.45  rec   79220.29  kl   19.15  (614s)
+  it   4000/4000  loss   77662.75  rec   77643.62  kl   19.13  (820s)
+[pill] recon AUROC 0.872 | paper-setting (layer2,mu,relu) 0.379 | best attention 0.672  (1017s)
+[screw] train 320  test 160  anomalous px 0.0025
+  it   1000/4000  loss  110238.09  rec  110169.77  kl   68.32  (203s)
+  it   2000/4000  loss  110357.52  rec  110286.80  kl   70.73  (408s)
+  it   3000/4000  loss  107700.65  rec  107629.59  kl   71.06  (613s)
+  it   4000/4000  loss  108981.49  rec  108910.23  kl   71.26  (818s)
+[screw] recon AUROC 0.936 | paper-setting (layer2,mu,relu) 0.210 | best attention 0.904  (979s)
+[toothbrush] train 60  test 42  anomalous px 0.0153
+  it   1000/4000  loss   72861.52  rec   72819.40  kl   42.13  (205s)
+  it   2000/4000  loss   71412.91  rec   71374.56  kl   38.34  (406s)
+  it   3000/4000  loss   71574.12  rec   71538.41  kl   35.71  (611s)
+  it   4000/4000  loss   71858.45  rec   71822.70  kl   35.75  (816s)
+[toothbrush] recon AUROC 0.949 | paper-setting (layer2,mu,relu) 0.526 | best attention 0.828  (859s)
+[transistor] train 213  test 100  anomalous px 0.0479
+  it   1000/4000  loss  107637.62  rec  107554.31  kl   83.30  (205s)
+  it   2000/4000  loss  107638.96  rec  107555.95  kl   83.01  (411s)
+  it   3000/4000  loss  107429.96  rec  107343.95  kl   86.01  (615s)
+  it   4000/4000  loss  107603.19  rec  107515.39  kl   87.80  (818s)
+[transistor] recon AUROC 0.824 | paper-setting (layer2,mu,relu) 0.600 | best attention 0.743  (924s)
+[zipper] train 240  test 151  anomalous px 0.0207
+  it   1000/4000  loss   84887.24  rec   84810.55  kl   76.70  (205s)
+  it   2000/4000  loss   84711.88  rec   84635.23  kl   76.65  (408s)
+  it   3000/4000  loss   84442.51  rec   84360.67  kl   81.84  (612s)
+  it   4000/4000  loss   84717.91  rec   84638.97  kl   78.94  (817s)
+[zipper] recon AUROC 0.749 | paper-setting (layer2,mu,relu) 0.260 | best attention 0.784  (1007s)

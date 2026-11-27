@@ -1,0 +1,108 @@
+{
+  "Vanilla-VAE": {
+    "auroc": 0.9023049335591129,
+    "best_iou": 0.06806613515295827
+  },
+  "Ours(conv1,mu,relu)": {
+    "auroc": 0.35153855936176065,
+    "best_iou": 0.00576635
+  },
+  "Ours(conv1,mu,abs)": {
+    "auroc": 0.362811115149031,
+    "best_iou": 0.005801852424728869
+  },
+  "Ours(conv1,ndd,relu)": {
+    "auroc": 0.5879849461484542,
+    "best_iou": 0.026728215649398757
+  },
+  "Ours(conv1,ndd,abs)": {
+    "auroc": 0.36444445707863865,
+    "best_iou": 0.005802753491690978
+  },
+  "Ours(conv1,kl,relu)": {
+    "auroc": 0.5075698095725227,
+    "best_iou": 0.006669793774393556
+  },
+  "Ours(conv1,kl,abs)": {
+    "auroc": 0.5946024415999883,
+    "best_iou": 0.007443935692024501
+  },
+  "Ours(conv1,mahal,relu)": {
+    "auroc": 0.48072056365722177,
+    "best_iou": 0.006044544738335563
+  },
+  "Ours(conv1,mahal,abs)": {
+    "auroc": 0.5565743893157997,
+    "best_iou": 0.00811140921380923
+  },
+  "Ours(conv2,mu,relu)": {
+    "auroc": 0.3601416620980956,
+    "best_iou": 0.006066905001909604
+  },
+  "Ours(conv2,mu,abs)": {
+    "auroc": 0.4196076759455361,
+    "best_iou": 0.0060971812214291946
+  },
+  "Ours(conv2,ndd,relu)": {
+    "auroc": 0.6889526025204773,
+    "best_iou": 0.032206179303888395
+  },
+  "Ours(conv2,ndd,abs)": {
+    "auroc": 0.4234238289606804,
+    "best_iou": 0.005816246056782335
+  },
+  "Ours(conv2,kl,relu)": {
+    "auroc": 0.4976723836551389,
+    "best_iou": 0.00576635
+  },
+  "Ours(conv2,kl,abs)": {
+    "auroc": 0.8680028501730195,
+    "best_iou": 0.042625934236797
+  },
+  "Ours(conv2,mahal,relu)": {
+    "auroc": 0.43579678670751415,
+    "best_iou": 0.00576635
+  },
+  "Ours(conv2,mahal,abs)": {
+    "auroc": 0.7908278993429798,
+    "best_iou": 0.03091173613621811
+  },
+  "Ours(conv3,mu,relu)": {
+    "auroc": 0.5899414039405119,
+    "best_iou": 0.010089010821252117
+  },
+  "Ours(conv3,mu,abs)": {
+    "auroc": 0.5741348480534019,
+    "best_iou": 0.008399598506312025
+  },
+  "Ours(conv3,ndd,relu)": {
+    "auroc": 0.553626927647315,
+    "best_iou": 0.014899304755580252
+  },
+  "Ours(conv3,ndd,abs)": {
+    "auroc": 0.5809743252217876,
+    "best_iou": 0.008604459217139754
+  },
+  "Ours(conv3,kl,relu)": {
+    "auroc": 0.8461332323143933,
+    "best_iou": 0.02614102396451387
+  },
+  "Ours(conv3,kl,abs)": {
+    "auroc": 0.8461332317723653,
+    "best_iou": 0.02614102396451387
+  },
+  "Ours(conv3,mahal,relu)": {
+    "auroc": 0.7164713802609226,
+    "best_iou": 0.01665895362505861
+  },
+  "Ours(conv3,mahal,abs)": {
+    "auroc": 0.732791130636244,
+    "best_iou": 0.016654527679929577
+  },
+  "paper": {
+    "Vanilla-VAE": 0.86,
+    "Ours(Conv1)": 0.89,
+    "Ours(Conv2)": 0.92,
+    "Ours(Conv3)": 0.91
+  }
+}

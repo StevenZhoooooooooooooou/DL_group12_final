@@ -1,0 +1,15 @@
+[carpet] paper setting layer2 raw 0.633 blur_norm 0.643 | recon raw 0.565 blur 0.671
+[grid] paper setting layer2 raw 0.537 blur_norm 0.516 | recon raw 0.728 blur 0.864
+[leather] paper setting layer2 raw 0.489 blur_norm 0.580 | recon raw 0.837 blur 0.986
+[tile] paper setting layer2 raw 0.454 blur_norm 0.450 | recon raw 0.528 blur 0.529
+[wood] paper setting layer2 raw 0.515 blur_norm 0.530 | recon raw 0.680 blur 0.797
+[bottle] paper setting layer2 raw 0.558 blur_norm 0.555 | recon raw 0.883 blur 0.943
+[cable] paper setting layer2 raw 0.537 blur_norm 0.574 | recon raw 0.840 blur 0.916
+[capsule] paper setting layer2 raw 0.560 blur_norm 0.622 | recon raw 0.887 blur 0.956
+[hazelnut] paper setting layer2 raw 0.657 blur_norm 0.716 | recon raw 0.948 blur 0.983
+[metal_nut] paper setting layer2 raw 0.562 blur_norm 0.586 | recon raw 0.870 blur 0.934
+[pill] paper setting layer2 raw 0.586 blur_norm 0.585 | recon raw 0.872 blur 0.925
+[screw] paper setting layer2 raw 0.318 blur_norm 0.338 | recon raw 0.937 blur 0.983
+[toothbrush] paper setting layer2 raw 0.589 blur_norm 0.598 | recon raw 0.946 blur 0.984
+[transistor] paper setting layer2 raw 0.569 blur_norm 0.586 | recon raw 0.810 blur 0.888
+[zipper] paper setting layer2 raw 0.579 blur_norm 0.603 | recon raw 0.756 blur 0.900

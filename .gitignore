@@ -1,0 +1,17 @@
+# datasets (download instructions in README)
+data/
+# third-party code: clone separately (see README)
+expVAE/
+szu_repro/
+official_run/*
+!official_run/PATCHES.md
+!official_run/*.log
+# weights, caches, job bookkeeping
+*.pt
+*.pth
+__pycache__/
+.piptmp/
+outputs/jobs/
+outputs/*.pgid
+outputs/.watch_*
+outputs/szu_ref/data/

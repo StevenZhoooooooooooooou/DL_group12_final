@@ -1,0 +1,15 @@
+[carpet] SZU-style layer2 raw 0.733 | paper setting layer2 raw 0.498 blur_norm 0.488 | recon raw 0.546 blur 0.581
+[grid] SZU-style layer2 raw 0.531 | paper setting layer2 raw 0.488 blur_norm 0.480 | recon raw 0.607 blur 0.668
+[leather] SZU-style layer2 raw 0.857 | paper setting layer2 raw 0.352 blur_norm 0.370 | recon raw 0.838 blur 0.986
+[tile] SZU-style layer2 raw 0.678 | paper setting layer2 raw 0.430 blur_norm 0.380 | recon raw 0.522 blur 0.514
+[wood] SZU-style layer2 raw 0.766 | paper setting layer2 raw 0.584 blur_norm 0.606 | recon raw 0.677 blur 0.798
+[bottle] SZU-style layer2 raw 0.428 | paper setting layer2 raw 0.480 blur_norm 0.445 | recon raw 0.881 blur 0.941
+[cable] SZU-style layer2 raw 0.633 | paper setting layer2 raw 0.810 blur_norm 0.822 | recon raw 0.816 blur 0.898
+[capsule] SZU-style layer2 raw 0.792 | paper setting layer2 raw 0.599 blur_norm 0.589 | recon raw 0.882 blur 0.953
+[hazelnut] done, skipping
+[metal_nut] SZU-style layer2 raw 0.696 | paper setting layer2 raw 0.787 blur_norm 0.787 | recon raw 0.864 blur 0.927
+[pill] SZU-style layer2 raw 0.665 | paper setting layer2 raw 0.379 blur_norm 0.380 | recon raw 0.872 blur 0.925
+[screw] SZU-style layer2 raw 0.912 | paper setting layer2 raw 0.210 blur_norm 0.165 | recon raw 0.936 blur 0.981
+[toothbrush] SZU-style layer2 raw 0.744 | paper setting layer2 raw 0.526 blur_norm 0.558 | recon raw 0.949 blur 0.986
+[transistor] SZU-style layer2 raw 0.717 | paper setting layer2 raw 0.601 blur_norm 0.592 | recon raw 0.824 blur 0.908
+[zipper] SZU-style layer2 raw 0.364 | paper setting layer2 raw 0.260 blur_norm 0.223 | recon raw 0.749 blur 0.890

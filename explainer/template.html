@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAE 视觉解释精读</title>
+<style>
+:root{
+  --bg:#fbfaf7; --panel:#ffffff; --ink:#1d1f24; --muted:#5d6370; --line:#e3e1db;
+  --accent:#2f5bd3; --accent-soft:#e8eefc; --warm:#c2410c; --warm-soft:#fdeee5;
+  --good:#15803d; --good-soft:#e6f4ea; --bad:#b91c1c; --bad-soft:#fdecec;
+  --code:#f3f2ee; --heat1:#fde68a; --heat2:#f97316; --heat3:#2563eb;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171b; --panel:#1d2026; --ink:#e7e9ee; --muted:#a2a8b4; --line:#30343c;
+    --accent:#7aa2ff; --accent-soft:#1f2a44; --warm:#fb923c; --warm-soft:#3a2418;
+    --good:#4ade80; --good-soft:#16301f; --bad:#f87171; --bad-soft:#3a1c1c;
+    --code:#262a31; --heat1:#a16207; --heat2:#ea580c; --heat3:#60a5fa;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171b; --panel:#1d2026; --ink:#e7e9ee; --muted:#a2a8b4; --line:#30343c;
+  --accent:#7aa2ff; --accent-soft:#1f2a44; --warm:#fb923c; --warm-soft:#3a2418;
+  --good:#4ade80; --good-soft:#16301f; --bad:#f87171; --bad-soft:#3a1c1c;
+  --code:#262a31; --heat1:#a16207; --heat2:#ea580c; --heat3:#60a5fa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 -apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",system-ui,sans-serif}
+main{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+h1{font-size:28px;line-height:1.3;margin:0 0 6px}
+h2{font-size:21px;margin:44px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:17px;margin:26px 0 8px}
+p{margin:10px 0}
+.sub{color:var(--muted);margin:0 0 18px}
+nav{display:flex;flex-wrap:wrap;gap:6px 8px;margin:14px 0 6px}
+nav a{font-size:13px;color:var(--accent);text-decoration:none;background:var(--accent-soft);padding:3px 10px;border-radius:999px}
+.tldr{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14.5px}
+.card b{display:block;font-size:15px;margin-bottom:2px}
+.eq{background:var(--code);border-radius:8px;padding:10px 14px;margin:10px 0;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:17px;overflow-x:auto;white-space:nowrap}
+.eq .tag{float:right;color:var(--muted);font-family:inherit;font-size:13px;margin-left:16px}
+.note{font-size:14px;color:var(--muted)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+.callout.warn{background:var(--warm-soft);border:1px solid color-mix(in srgb,var(--warm) 35%,transparent)}
+.callout.bad{background:var(--bad-soft);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
+.callout.good{background:var(--good-soft);border:1px solid color-mix(in srgb,var(--good) 35%,transparent)}
+.callout b{display:block;margin-bottom:2px}
+figure{margin:16px 0}
+figure svg,figure img{width:100%;height:auto;display:block;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+figcaption{font-size:13.5px;color:var(--muted);margin-top:6px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--panel);border-radius:10px;overflow:hidden}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+th{background:var(--code);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.lo{color:var(--bad);font-weight:600}
+.hi{color:var(--good);font-weight:600}
+ol,ul{padding-left:22px}
+li{margin:4px 0}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font-size:.9em}
+.svg-ink{fill:var(--ink)} .svg-muted{fill:var(--muted)}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.box-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.box-warm{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.5}
+.arrow{stroke:var(--muted);stroke-width:1.8;fill:none}
+.arrow-acc{stroke:var(--accent);stroke-width:2;fill:none;stroke-dasharray:6 4}
+.arrow-warm{stroke:var(--warm);stroke-width:2;fill:none;stroke-dasharray:6 4}
+svg text{font-family:-apple-system,"PingFang SC","Noto Sans CJK SC",sans-serif}
+.qa dt{font-weight:600;margin-top:12px}
+.qa dd{margin:2px 0 0 0;color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Towards Visually Explaining Variational Autoencoders</h1>
+<p class="sub">Liu, Li, Zheng, Karanam, Wu, Bhanu, Radke, Camps · CVPR 2020 · 论文精读 + 复现观察</p>
+
+<nav>
+  <a href="#tldr">一句话</a><a href="#bg">背景</a><a href="#method">核心方法</a>
+  <a href="#anomaly">应用一：异常定位</a><a href="#ad">应用二：注意力解耦</a>
+  <a href="#repro">复现结果</a><a href="#critique">批判性分析</a><a href="#qa">可能被问的问题</a>
+</nav>
+
+<div class="tldr" id="tldr">
+  <b>一句话：</b>把 Grad-CAM 里"反传的类别分数"换成 <b>VAE 的隐变量 z<sub>i</sub></b>，就能为 VAE 画出注意力图；
+  再把这些图用在两件事上：<b>定位图像里的异常区域</b>，以及作为训练约束<b>让隐空间更解耦</b>。
+</div>
+
+<div class="cards">
+  <div class="card"><b>① VAE Attention</b>从隐空间反传梯度到卷积特征图，为每个隐维度 z<sub>i</sub> 生成一张注意力图 M<sub>i</sub>。不需要分类器。</div>
+  <div class="card"><b>② 异常定位</b>单类 VAE 只见过正常数据；对异常样本的隐编码反传，热力图指向异常位置。MVTec-AD 上号称 SOTA。</div>
+  <div class="card"><b>③ 注意力解耦损失 L<sub>AD</sub></b>惩罚两个隐维度注意力图的重叠，加到 FactorVAE 上，dSprites 解耦分数 0.82 → 0.90。</div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="bg">1. 背景：为什么 Grad-CAM 不能直接用在 VAE 上</h2>
+<p>Grad-CAM 解释分类网络的方式是：取某一类的输出分数 y<sub>c</sub>，对最后一层卷积特征图 A 求梯度，用梯度给 A 的每个通道加权，得到"哪里让网络认为这是猫"的热力图。
+它的前提是<b>存在一个标量分数可以反传</b>。</p>
+<p>VAE 没有类别：编码器输出的是后验分布 q(z|x) = 𝒩(μ, σ²)，解码器输出重建图 x̂。
+这篇文章的关键观察是：<b>隐变量 z 本身就是 VAE 对输入的"判断"</b>，因此可以把 z 的每一维当作那个标量来反传。</p>
+
+<figure>
+<svg viewBox="0 0 860 250" role="img" aria-label="Grad-CAM 与 VAE attention 对比">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    <marker id="ahA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+    <marker id="ahW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--warm)"/></marker>
+  </defs>
+  <text x="20" y="30" class="svg-muted" font-size="14" font-weight="600">Grad-CAM（分类网络）</text>
+  <rect x="20" y="45" width="90" height="50" rx="8" class="box"/><text x="65" y="75" text-anchor="middle" class="svg-ink" font-size="14">图像 x</text>
+  <rect x="150" y="45" width="140" height="50" rx="8" class="box"/><text x="220" y="75" text-anchor="middle" class="svg-ink" font-size="14">CNN 卷积层</text>
+  <rect x="330" y="45" width="130" height="50" rx="8" class="box-acc"/><text x="395" y="75" text-anchor="middle" class="svg-ink" font-size="14">特征图 A</text>
+  <rect x="500" y="45" width="110" height="50" rx="8" class="box"/><text x="555" y="75" text-anchor="middle" class="svg-ink" font-size="14">全连接</text>
+  <rect x="650" y="45" width="170" height="50" rx="8" class="box-warm"/><text x="735" y="75" text-anchor="middle" class="svg-ink" font-size="14">类别分数 y_c</text>
+  <path d="M110 70 H146" class="arrow" marker-end="url(#ah)"/><path d="M290 70 H326" class="arrow" marker-end="url(#ah)"/>
+  <path d="M460 70 H496" class="arrow" marker-end="url(#ah)"/><path d="M610 70 H646" class="arrow" marker-end="url(#ah)"/>
+  <path d="M735 98 C735 125, 395 125, 395 100" class="arrow-warm" marker-end="url(#ahW)"/>
+  <text x="565" y="122" text-anchor="middle" fill="var(--warm)" font-size="13">∂y_c / ∂A</text>
+
+  <text x="20" y="160" class="svg-muted" font-size="14" font-weight="600">本文（VAE 编码器）</text>
+  <rect x="20" y="175" width="90" height="50" rx="8" class="box"/><text x="65" y="205" text-anchor="middle" class="svg-ink" font-size="14">图像 x</text>
+  <rect x="150" y="175" width="140" height="50" rx="8" class="box"/><text x="220" y="205" text-anchor="middle" class="svg-ink" font-size="14">编码器卷积层</text>
+  <rect x="330" y="175" width="130" height="50" rx="8" class="box-acc"/><text x="395" y="205" text-anchor="middle" class="svg-ink" font-size="14">特征图 A</text>
+  <rect x="500" y="175" width="110" height="50" rx="8" class="box"/><text x="555" y="205" text-anchor="middle" class="svg-ink" font-size="14">μ , σ</text>
+  <rect x="650" y="175" width="170" height="50" rx="8" class="box-acc"/><text x="735" y="199" text-anchor="middle" class="svg-ink" font-size="14">隐变量 z_i</text><text x="735" y="217" text-anchor="middle" class="svg-muted" font-size="12">z = μ + σ·ε</text>
+  <path d="M110 200 H146" class="arrow" marker-end="url(#ah)"/><path d="M290 200 H326" class="arrow" marker-end="url(#ah)"/>
+  <path d="M460 200 H496" class="arrow" marker-end="url(#ah)"/><path d="M610 200 H646" class="arrow" marker-end="url(#ah)"/>
+  <path d="M735 172 C735 145, 395 145, 395 170" class="arrow-acc" marker-end="url(#ahA)"/>
+  <text x="565" y="152" text-anchor="middle" fill="var(--accent)" font-size="13">∂z_i / ∂A（不需要类别）</text>
+</svg>
+<figcaption>唯一的区别是反传的起点：分类器用类别分数，VAE 用隐变量的某一维。</figcaption>
+</figure>
+
+<h3>预备：VAE 在训练什么</h3>
+<div class="eq">L = L<sub>r</sub>(x, x̂) + KL( q(z|x) ‖ 𝒩(0, I) )<span class="tag">Eq. 1</span></div>
+<p>重建项让 x̂ 接近 x；KL 项把每个样本的后验拉向标准正态。<b>后面的一切都建立在这一点上：训练好之后，正常数据的隐编码应该大致服从 𝒩(0, I)。</b>
+编码时用重参数化 z = μ + σ·ε（ε ~ 𝒩(0, I)）采样，使采样可导。</p>
+
+<!-- ============================================================ -->
+<h2 id="method">2. 核心方法：VAE Attention（Sec. 3.2）</h2>
+
+<figure>
+<svg viewBox="0 0 860 300" role="img" aria-label="VAE attention 计算流程">
+  <defs>
+    <marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    <marker id="b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+  </defs>
+  <!-- forward row -->
+  <rect x="20" y="30" width="80" height="80" rx="8" class="box"/><text x="60" y="76" text-anchor="middle" class="svg-ink" font-size="14">x</text>
+  <!-- feature map stack -->
+  <g>
+    <rect x="160" y="22" width="78" height="78" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/>
+    <rect x="152" y="30" width="78" height="78" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/>
+    <rect x="144" y="38" width="78" height="78" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/>
+    <text x="183" y="82" text-anchor="middle" class="svg-ink" font-size="14">A</text>
+    <text x="191" y="136" text-anchor="middle" class="svg-muted" font-size="12">n 个通道 · h×w</text>
+  </g>
+  <rect x="300" y="45" width="100" height="56" rx="8" class="box"/><text x="350" y="70" text-anchor="middle" class="svg-ink" font-size="14">μ, σ</text><text x="350" y="89" text-anchor="middle" class="svg-muted" font-size="11">q(z|x)</text>
+  <rect x="460" y="45" width="150" height="56" rx="8" class="box-acc"/><text x="535" y="70" text-anchor="middle" class="svg-ink" font-size="14">z = (z₁ … z_D)</text><text x="535" y="89" text-anchor="middle" class="svg-muted" font-size="11">重参数化采样</text>
+  <path d="M100 70 H138" class="arrow" marker-end="url(#b1)"/><path d="M240 70 H296" class="arrow" marker-end="url(#b1)"/><path d="M400 73 H456" class="arrow" marker-end="url(#b1)"/>
+  <text x="120" y="60" text-anchor="middle" class="svg-muted" font-size="11">编码器</text>
+
+  <!-- backward row -->
+  <path d="M535 104 V170 H250" class="arrow-acc" marker-end="url(#b2)"/>
+  <text x="400" y="162" text-anchor="middle" fill="var(--accent)" font-size="13">① 对每一维 z_i 求 ∂z_i / ∂A_k</text>
+
+  <rect x="40" y="200" width="200" height="70" rx="8" class="box"/>
+  <text x="140" y="226" text-anchor="middle" class="svg-ink" font-size="14">② 全局平均池化</text>
+  <text x="140" y="250" text-anchor="middle" class="svg-muted" font-size="12">α_k = 每个通道梯度的均值</text>
+
+  <rect x="300" y="200" width="230" height="70" rx="8" class="box"/>
+  <text x="415" y="226" text-anchor="middle" class="svg-ink" font-size="14">③ 加权求和 + ReLU</text>
+  <text x="415" y="250" text-anchor="middle" class="svg-muted" font-size="12">ReLU( Σ_k α_k A_k )</text>
+
+  <rect x="590" y="190" width="90" height="90" rx="6" fill="var(--panel)" stroke="var(--line)"/>
+  <circle cx="625" cy="225" r="26" fill="var(--heat2)" opacity=".55"/><circle cx="625" cy="225" r="12" fill="var(--heat2)" opacity=".9"/>
+  <text x="730" y="230" class="svg-ink" font-size="14">M_i</text>
+  <text x="730" y="250" class="svg-muted" font-size="12">第 i 维的注意力图</text>
+
+  <path d="M240 235 H296" class="arrow" marker-end="url(#b1)"/><path d="M530 235 H586" class="arrow" marker-end="url(#b1)"/>
+  <path d="M183 140 V196" class="arrow" marker-end="url(#b1)"/>
+</svg>
+<figcaption>对 D 个隐维度各做一遍，得到 M₁ … M_D；需要一张总图时取平均即可。</figcaption>
+</figure>
+
+<div class="eq">α<sub>k</sub> = (1/T) Σ<sub>p=1..h</sub> Σ<sub>q=1..w</sub> ∂z<sub>i</sub> / ∂A<sub>k</sub><sup>pq</sup> ,&nbsp;&nbsp; T = h×w<span class="tag">Eq. 3</span></div>
+<div class="eq">M<sub>i</sub> = ReLU( Σ<sub>k=1..n</sub> α<sub>k</sub> A<sub>k</sub> ) ,&nbsp;&nbsp; M = (1/D) Σ<sub>i</sub> M<sub>i</sub><span class="tag">Eq. 2</span></div>
+
+<p><b>怎么理解 M<sub>i</sub>：</b>它回答"图像的哪些区域在推动 z<sub>i</sub> 变大"。α<sub>k</sub> 衡量第 k 个特征通道对 z<sub>i</sub> 有多重要，A<sub>k</sub> 告诉你这个通道在空间上哪里被激活；两者相乘再求和，就是 z<sub>i</sub> 在空间上的"来源"。
+ReLU 只保留正向贡献，这是从 Grad-CAM 继承来的设计。</p>
+<p class="note">细节：z 是采样得到的，所以注意力图本身也是随机的；多次采样会得到一个"注意力图的分布"。论文把如何解释这个分布留作 future work。</p>
+
+<!-- ============================================================ -->
+<h2 id="anomaly">3. 应用一：用注意力图定位异常（Sec. 3.3）</h2>
+
+<div class="cards">
+  <div class="card"><b>训练</b>单类 VAE（one-class VAE）：只用正常数据训练，例如只有数字"1"，或只有无缺陷的榛子。</div>
+  <div class="card"><b>假设</b>正常样本的隐编码 ≈ 𝒩(0, I)；异常样本的隐编码会<b>偏离</b>这个分布。</div>
+  <div class="card"><b>推论</b>从"偏离的隐编码"反传，热力图就该落在"造成偏离的像素"上——也就是异常的位置。</div>
+</div>
+
+<figure>
+<svg viewBox="0 0 860 220" role="img" aria-label="隐空间中正常与异常样本">
+  <rect x="20" y="15" width="330" height="190" rx="10" class="box"/>
+  <text x="185" y="38" text-anchor="middle" class="svg-muted" font-size="13">隐空间（示意）</text>
+  <circle cx="160" cy="125" r="58" fill="var(--accent-soft)" stroke="var(--accent)" stroke-dasharray="4 4"/>
+  <g fill="var(--accent)"><circle cx="150" cy="118" r="4"/><circle cx="172" cy="132" r="4"/><circle cx="140" cy="140" r="4"/><circle cx="182" cy="110" r="4"/><circle cx="160" cy="150" r="4"/><circle cx="128" cy="115" r="4"/><circle cx="195" cy="138" r="4"/></g>
+  <text x="160" y="198" text-anchor="middle" fill="var(--accent)" font-size="12">正常样本 ≈ 𝒩(0, I)</text>
+  <circle cx="295" cy="70" r="7" fill="var(--warm)"/><text x="295" y="98" text-anchor="middle" fill="var(--warm)" font-size="12">异常样本</text>
+  <path d="M215 110 L285 76" stroke="var(--warm)" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+  <text x="400" y="50" class="svg-ink" font-size="15" font-weight="600">反传的"分数"怎么构造？</text>
+  <rect x="400" y="65" width="440" height="58" rx="8" class="box-acc"/>
+  <text x="415" y="89" class="svg-ink" font-size="14">方式 A（论文实际用来出结果的）</text>
+  <text x="415" y="110" class="svg-ink" font-size="14">s = Σ<tspan baseline-shift="sub" font-size="10">i</tspan> μ<tspan baseline-shift="sub" font-size="10">i</tspan> ，用 s 代替 z<tspan baseline-shift="sub" font-size="10">i</tspan> 反传 → 异常注意力图 M</text>
+  <rect x="400" y="133" width="440" height="72" rx="8" class="box"/>
+  <text x="415" y="157" class="svg-ink" font-size="14">方式 B：正常差分布（Eq. 4）</text>
+  <text x="415" y="178" class="svg-muted" font-size="13">两个高斯之差仍是高斯：𝒩(μˣ − μʸ, σˣ² + σʸ²)，</text>
+  <text x="415" y="196" class="svg-muted" font-size="13">μˣ, σˣ 来自所有正常训练样本；从中采样 z 再反传</text>
+</svg>
+</figure>
+
+<div class="eq">P<sub>q(z<sub>i</sub>|x) − q(z<sub>i</sub>|y)</sub>(u) = exp( −[u − (μ<sub>i</sub><sup>x</sup> − μ<sub>i</sub><sup>y</sup>)]² / 2((σ<sub>i</sub><sup>x</sup>)² + (σ<sub>i</sub><sup>y</sup>)²) ) / √( 2π((σ<sub>i</sub><sup>x</sup>)² + (σ<sub>i</sub><sup>y</sup>)²) )<span class="tag">Eq. 4</span></div>
+
+<h3>论文的实验与结论</h3>
+<div class="tbl"><table>
+<tr><th>数据集</th><th>设置</th><th>评价</th><th>论文结论</th></tr>
+<tr><td>MNIST</td><td>只用"1"训练，测试其他数字</td><td>定性（Fig. 4）</td><td>"7"的注意力落在顶部横杠——正是 7 与 1 的区别</td></tr>
+<tr><td>UCSD Ped1</td><td>人行道监控视频，100×100；异常＝自行车、汽车、轮椅</td><td>像素级 AUROC（Table 1）</td><td>Conv1/2/3：0.89 / 0.92 / 0.91，均优于重建差 0.86</td></tr>
+<tr><td>MVTec-AD</td><td>15 类工业缺陷；ResNet18 编码器，32 维隐空间，256×256</td><td>像素级 ROC AUC + 最佳 IoU（Table 2）</td><td>多数物体类别优于 AE(SSIM/L2)、AnoGAN、CNN 特征字典</td></tr>
+</table></div>
+<p class="note">像素级 AUROC：把测试集所有像素的注意力值当作"异常分数"，与像素级真值掩码比较；最佳 IoU：在 ROC 曲线上遍历阈值取最高的交并比。</p>
+
+<!-- ============================================================ -->
+<h2 id="ad">4. 应用二：注意力解耦损失（Sec. 3.4）</h2>
+<p><b>解耦（disentanglement）</b>：希望隐空间每一维只编码一个独立的生成因素（位置、大小、旋转……）。
+作者的推理：既然每一维都有自己的注意力图，那么<b>如果各维关注的是图像不同区域，隐空间就更解耦</b>。于是把"注意力图要分开"写成一个可训练的约束。</p>
+
+<figure>
+<svg viewBox="0 0 860 200" role="img" aria-label="注意力重叠与分离">
+  <text x="200" y="28" text-anchor="middle" class="svg-ink" font-size="14" font-weight="600">L_AD 大：两张图重叠</text>
+  <rect x="60" y="40" width="130" height="130" rx="6" class="box"/>
+  <circle cx="125" cy="105" r="40" fill="var(--heat2)" opacity=".7"/><text x="125" y="188" text-anchor="middle" class="svg-muted" font-size="12">M_i</text>
+  <rect x="210" y="40" width="130" height="130" rx="6" class="box"/>
+  <circle cx="280" cy="110" r="40" fill="var(--heat3)" opacity=".7"/><text x="275" y="188" text-anchor="middle" class="svg-muted" font-size="12">M_j</text>
+
+  <text x="640" y="28" text-anchor="middle" class="svg-ink" font-size="14" font-weight="600">L_AD 小：关注不同区域</text>
+  <rect x="500" y="40" width="130" height="130" rx="6" class="box"/>
+  <circle cx="540" cy="80" r="28" fill="var(--heat2)" opacity=".7"/><text x="565" y="188" text-anchor="middle" class="svg-muted" font-size="12">M_i</text>
+  <rect x="650" y="40" width="130" height="130" rx="6" class="box"/>
+  <circle cx="745" cy="135" r="28" fill="var(--heat3)" opacity=".7"/><text x="715" y="188" text-anchor="middle" class="svg-muted" font-size="12">M_j</text>
+  <path d="M400 105 H460" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="430" y="95" text-anchor="middle" class="svg-muted" font-size="12">训练</text>
+</svg>
+</figure>
+
+<div class="eq">L<sub>AD</sub> = 2 · Σ<sub>ij</sub> min(A<sup>1</sup><sub>ij</sub>, A<sup>2</sup><sub>ij</sub>) / Σ<sub>ij</sub> (A<sup>1</sup><sub>ij</sub> + A<sup>2</sup><sub>ij</sub>)<span class="tag">Eq. 5</span></div>
+<div class="eq">L = L<sub>FV</sub> + λ · L<sub>AD</sub> ,&nbsp;&nbsp; L<sub>FV</sub> = 重建 + KL + γ · TC(z)<span class="tag">Eq. 6</span></div>
+<ul>
+  <li><b>L<sub>AD</sub> 的含义</b>：两张图的重叠系数，形式类似 Dice。完全重合 = 1，毫不重叠 = 0。</li>
+  <li><b>为什么能训练</b>：注意力图本身是梯度算出来的，所以 L<sub>AD</sub> 要对"梯度"再求梯度（二阶导）。</li>
+  <li><b>FactorVAE</b>：TC（total correlation，各维统计相关性）没法直接算，用一个判别器区分"真实 z"和"每维各自打乱后的 z"来估计；γ 控制独立性约束的强度。</li>
+  <li><b>数据与指标</b>：dSprites（73 万张 64×64 二值小图，由形状/大小/旋转/x/y 五个因素生成）；FactorVAE 解耦分数（固定某个因素，看哪一维方差最小，用多数投票分类器的准确率作分数）。</li>
+  <li><b>论文结果（Fig. 8）</b>：AD-FactorVAE ≈ 0.90，FactorVAE(γ=40) ≈ 0.82，β-VAE(β=4) = 0.73，重建误差都约 40。Fig. 9 显示 AD-FactorVAE 两个主要维度的注意力落在不同区域。</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="repro">5. 复现结果</h2>
+<p class="note">新环境：PyTorch 2.11 + CUDA 12.8，RTX 5070 Ti Laptop。参考了作者官方代码（只有 MNIST）和一份第三方复现。"论文设定"＝ s = Σμ<sub>i</sub> + ReLU（Eq. 2）。KL / Mahalanobis 是我加的诊断性打分，<b>不是论文方法</b>。</p>
+
+<h3>UCSD Ped1 · Table 1（像素级 AUROC，10 个有像素真值的测试片段）</h3>
+<div class="tbl"><table>
+<tr><th>方法</th><th>论文</th><th>复现（论文设定）</th><th>复现（KL 打分，非论文）</th></tr>
+<tr><td>重建差 |x − x̂|</td><td>0.86</td><td class="hi">0.902</td><td>—</td></tr>
+<tr><td>注意力 Conv1（50×50）</td><td>0.89</td><td class="lo">0.352</td><td>0.595</td></tr>
+<tr><td>注意力 Conv2（25×25）</td><td>0.92</td><td class="lo">0.360</td><td>0.868</td></tr>
+<tr><td>注意力 Conv3（12×12）</td><td>0.91</td><td class="lo">0.590</td><td>0.846</td></tr>
+</table></div>
+<figure><img alt="UCSD 定性结果" src="{{UCSD_IMG}}"><figcaption>复现的 UCSD 结果。列：输入 / 真值 / 论文设定的注意力 / 重建差。注意力几乎每帧都落在画面下方同一区域，与异常（车）在哪无关；重建差反而能圈出车。</figcaption></figure>
+
+<h3>MVTec-AD · Table 2（像素级 ROC AUC，15 类，两种 ResNet18 编码器）</h3>
+<p>论文没说 ResNet18 是否 ImageNet 预训练，所以两种都跑了。下表"注意力"一栏固定用 layer2；若对 15 类统一选平均最好的一层，论文设定也只有 0.550（从头）/ 0.558（预训练），最佳 IoU 0.046 / 0.053（论文 0.20）。</p>
+<div class="tbl"><table>
+<tr><th>类别</th><th>论文（本文方法）</th><th>重建差<br><span class="note">从头 / 预训练</span></th><th>注意力，论文设定<br><span class="note">从头 / 预训练</span></th></tr>
+{{MVTEC_ROWS}}
+</table></div>
+<figure><img alt="MVTec 柱状对比" src="{{MVTEC_BAR_IMG}}"><figcaption>从头训练编码器，15 类对比：论文报告值 / 复现的重建差 / 复现的论文设定注意力 / 最好的非论文变体。</figcaption></figure>
+<figure><img alt="Hazelnut 定性结果" src="{{HAZEL_IMG}}"><figcaption>Hazelnut：每列一种缺陷。行：输入 / 真值 / 重建差 / 论文设定注意力 / KL 打分注意力。</figcaption></figure>
+
+<h3>可靠性检查：结论是不是评估方式造成的？</h3>
+<p>不重新训练，只换评估方式，排除三类质疑：① 后处理不同（逐图归一化 / 高斯平滑，重建差也给同样的选项）；② 选层不同（每类在测试集上挑最有利的层和后处理 = 给论文的<b>上界</b>）；③ 挑选偏差（在测试集一半上选设置、在另一半上打分 = <b>交叉验证</b>）。UCSD 补到 3 个种子。</p>
+<div class="tbl"><table>
+<tr><th>像素级 AUROC</th><th>UCSD（3 种子）</th><th>MVTec 从头训练</th><th>MVTec 预训练</th></tr>
+<tr><td>论文报告（本文方法）</td><td>0.89–0.92</td><td colspan="2">0.86（IoU 0.20）</td></tr>
+<tr><td>重建差，原始</td><td>0.904 ± 0.001</td><td>0.794</td><td>0.806</td></tr>
+<tr><td>重建差，交叉验证（可选平滑）</td><td class="hi">0.955 ± 0.001</td><td class="hi">0.862（IoU 0.25）</td><td class="hi">0.883（IoU 0.27）</td></tr>
+<tr><td>注意力·论文设定，原始</td><td>0.49–0.63</td><td>0.550</td><td>0.558</td></tr>
+<tr><td>注意力·论文设定，<b>上界</b></td><td class="lo">0.664 ± 0.092</td><td class="lo">0.624（IoU 0.07）</td><td class="lo">0.660（IoU 0.06）</td></tr>
+<tr><td>注意力·论文设定，交叉验证</td><td class="lo">0.659 ± 0.098</td><td class="lo">0.606</td><td class="lo">0.647</td></tr>
+<tr><td>注意力·官方代码写法（逐像素验证一致），交叉验证</td><td class="lo">0.631 ± 0.084</td><td>0.686</td><td>0.639</td></tr>
+<tr><td>注意力·SZU 第三方写法（逐通道取绝对值），交叉验证</td><td>0.843 ± 0.044</td><td>0.769（IoU 0.11）</td><td>0.719（IoU 0.07）</td></tr>
+<tr><td>注意力·所有变体中最好（含非论文打分），交叉验证</td><td>0.894 ± 0.010</td><td>0.812（IoU 0.13）</td><td>0.769（IoU 0.11）</td></tr>
+<tr><td>任一注意力变体超过重建差的类别（交叉验证）</td><td>—</td><td>3 / 15</td><td>3 / 15</td></tr>
+</table></div>
+<div class="callout bad"><b>评估方式改变不了结论，但"怎么把通道合成一张图"影响很大</b>
+后处理几乎帮不了注意力图，却让重建差大幅提升；按论文公式（Eq. 2），即使给最有利的上界也只有 0.62–0.66。
+三种实现方式差别很大：论文 Eq. 2（求和后 ReLU）和官方代码（求和、上采样后取绝对值）都在 0.63–0.69；第三方 SZU 代码的"逐通道先取绝对值再平均"明显更好（UCSD 0.84，MVTec 0.72–0.77）——但这一写法论文中没有描述，而且仍低于重建差和论文报告的数字，IoU 也只有论文的一半左右。
+反而是一个普通 VAE 的重建差加高斯平滑，在交叉验证下就达到 0.86–0.96 / IoU 0.25–0.27，与论文给"本文方法"报的数字相当甚至更高。另外，注意力图在种子间波动 ±0.04–0.1，重建差只有 ±0.001。</div>
+
+<h3>按论文补充材料的设定重跑：是不是我们做错了？</h3>
+<p>论文的<a href="https://openaccess.thecvf.com/content_CVPR_2020/supplemental/Liu_Towards_Visually_Explaining_CVPR_2020_supplemental.pdf">补充材料</a>给出了几处正文没写、而我们最初没有照做的细节：UCSD 的网络<b>没有 BatchNorm</b>（lr 1e-4，batch 32）；MVTec 的 ResNet18 特征<b>直接展平</b>接 1024→32（而不是全局平均池化），旋转 ±30°，lr 1e-4，batch 8；dSprites 用 <b>32 维</b>隐空间（Table 4 的结构）。以下全部按这些设定重跑（交叉验证 / 3 个种子）。</p>
+<div class="tbl"><table>
+<tr><th>实验</th><th>指标</th><th>原来的设定</th><th>补充材料设定</th><th>论文</th></tr>
+<tr><td rowspan="4">UCSD</td><td>注意力·论文公式 Eq. 2</td><td>0.659</td><td class="lo">0.695</td><td rowspan="3">0.89–0.92</td></tr>
+<tr><td>注意力·官方代码写法</td><td>0.631</td><td class="hi">0.868 ± 0.012</td></tr>
+<tr><td>注意力·SZU 写法</td><td>0.843</td><td class="hi">0.892 ± 0.002</td></tr>
+<tr><td>重建差（原始 / 平滑）</td><td>0.904 / 0.955</td><td>0.902 / 0.953</td><td>0.86</td></tr>
+<tr><td rowspan="4">MVTec</td><td>注意力·论文公式 Eq. 2</td><td>0.606</td><td class="lo">0.609</td><td rowspan="3">0.86（IoU 0.20）</td></tr>
+<tr><td>注意力·官方代码写法</td><td>0.686</td><td class="lo">0.672</td></tr>
+<tr><td>注意力·所有变体最好</td><td>0.812</td><td class="lo">0.730</td></tr>
+<tr><td>重建差（平滑）</td><td>0.862（IoU 0.25）</td><td>0.878（IoU 0.25）</td><td>—</td></tr>
+<tr><td rowspan="3">dSprites</td><td>FactorVAE</td><td>0.763 ± 0.037</td><td class="hi">0.795 ± 0.011</td><td>0.82</td></tr>
+<tr><td>AD 论文原版（ReLU）</td><td>0.665 ± 0.149</td><td class="lo">0.762 ± 0.059</td><td>0.90</td></tr>
+<tr><td>AD 修正版（|·|，非论文）</td><td>0.828 ± 0.026</td><td>0.738 ± 0.096</td><td>—</td></tr>
+</table></div>
+<div class="callout warn"><b>结论：一部分是我们的问题，核心结论仍未复现</b>
+<b>UCSD</b>：去掉 BatchNorm 后，官方代码写法的注意力达到 0.87、SZU 写法 0.89，<b>接近论文数字</b>——之前 UCSD 偏低主要是我们的实现造成的；但论文正文公式仍只有 0.70，且注意力仍不如重建差（0.90–0.95）。
+<b>MVTec</b>：换成作者自己的展平编码器后注意力<b>没有变好</b>（单类有升有降，平均几乎不变），仍远低于 0.86 且不如重建差——这部分不是我们的实现造成的。
+<b>dSprites</b>：FactorVAE 基线更接近论文（0.795 vs 0.82）；论文版 AD loss 仍<b>没有提升</b>（0.762，注意力也没被分开）；我们的修正版在 32 维下也<b>不再稳定提升</b>（3 个种子 +0.05 / −0.01 / −0.21）。</div>
+
+<h3>MNIST · Fig. 4（定性）</h3>
+<figure><img alt="MNIST 异常注意力" src="{{MNIST_IMG}}"><figcaption>用"1"训练的单类 VAE，对其他数字的异常注意力（论文设定）。部分样本合理（如"0"的环），但"7"的高亮多在竖笔而非论文所说的顶部横杠。</figcaption></figure>
+<figure><img alt="官方代码对比" src="{{OFFICIAL_IMG}}"><figcaption>原样运行作者官方代码（官方训练脚本训练的模型）：第 2 列官方 Grad-CAM、第 3 列我们的实现（官方写法）逐像素一致；第 4 列为论文公式（ReLU）。官方写法下部分"7"的高亮落在顶部横杠，更接近论文 Fig. 4 的描述。</figcaption></figure>
+
+<h3>dSprites · Fig. 8 / Fig. 9（每种配置 3 个种子，各 3×10⁵ 步）</h3>
+<p>"修正版"＝我对 L<sub>AD</sub> 的修改：注意力图用 |·| 代替 ReLU，并跳过全零图的样本（见 6-③），<b>不是论文方法</b>。下表为最初的 10 维设定（Kim &amp; Mnih）；按补充材料的 32 维设定重跑的结果见上方"按论文补充材料的设定重跑"一节——修正版的提升在 32 维下没有保持。</p>
+<div class="tbl"><table>
+<tr><th>配置</th><th>种子 1 / 2 / 3</th><th>平均 ± 标准差</th><th>平均重建误差</th><th>论文</th></tr>
+<tr><td>β-VAE（β=4）</td><td>0.751 / 0.630 / 0.806</td><td class="hi">0.729 ± 0.074</td><td>47.8</td><td>0.73</td></tr>
+<tr><td>FactorVAE（γ=40）</td><td>0.710 / 0.792 / 0.785</td><td>0.763 ± 0.037</td><td>62.5</td><td>0.82</td></tr>
+<tr><td>AD-FactorVAE 论文原版（ReLU，λ=10）</td><td>0.718 / 0.463 / 0.815</td><td class="lo">0.665 ± 0.149</td><td>82.7</td><td>0.90</td></tr>
+<tr><td>AD-FactorVAE 修正版（|·|，λ=10）</td><td>0.807 / 0.811 / 0.864</td><td class="hi">0.828 ± 0.026</td><td>34.4</td><td>—</td></tr>
+<tr><td>AD-FactorVAE 修正版（|·|，λ=50）</td><td>0.632 / 0.797 / 0.812</td><td>0.747 ± 0.082</td><td>31.6</td><td>—</td></tr>
+</table></div>
+<figure><img alt="Fig. 8 复现" src="{{FIG8_IMG}}"><figcaption>解耦分数 vs 重建误差（每点一个种子；虚线为论文报告值）。修正版（蓝）集中在左上角；论文原版（橙）分散，其中两点重建误差 &gt; 100。</figcaption></figure>
+<p><b>注意力到底有没有被分开？</b>用 Eq. 5（|·| 图）测所有活跃维度两两之间的平均重叠（越低越分开）：</p>
+<div class="tbl"><table>
+<tr><th>配置</th><th>种子 1 / 2 / 3 的平均重叠</th></tr>
+<tr><td>FactorVAE</td><td>0.47 / 0.48 / 0.57</td></tr>
+<tr><td>论文原版 AD（ReLU）</td><td class="lo">0.55 / 0.44 / 0.56 —— 和基线一样，没有分开</td></tr>
+<tr><td>修正版 AD（λ=10）</td><td class="hi">0.09 / 0.14 / 0.15</td></tr>
+<tr><td>修正版 AD（λ=50）</td><td>0.06 / 0.07 / 0.07 —— 分得最开，但解耦分数反而更低</td></tr>
+</table></div>
+<figure><img alt="Fig. 9 复现" src="{{FIG9_IMG}}"><figcaption>第一行为输入；之后每两行是一个模型 KL 最大的两个维度的注意力图（种子 1）。FactorVAE 与论文原版的两张图几乎相同；修正版的两维分别关注物体的不同部位（上边缘 / 内部、左 / 右边缘）。</figcaption></figure>
+
+<!-- ============================================================ -->
+<h2 id="critique">6. 批判性分析</h2>
+
+<div class="callout bad"><b>① Σμ 不是"异常程度"的度量</b>
+s = Σμ<sub>i</sub> 是线性、有符号的：异常可能让一些 μ<sub>i</sub> 变大、另一些变小，求和后相互抵消；再加上 ReLU 只保留"让 s 变大"的区域，让 s 变小的异常区域直接被丢掉。
+更根本地，∂(Σμ)/∂A 回答的是"哪里影响编码"，而不是"哪里不正常"——于是容易退化成一张与输入无关的固定显著图（正是 UCSD 复现中看到的现象）。</div>
+
+<figure>
+<svg viewBox="0 0 860 170" role="img" aria-label="符号抵消示意">
+  <line x1="40" y1="95" x2="420" y2="95" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="40" y="30" class="svg-ink" font-size="14" font-weight="600">异常样本的 μ − μ(正常)</text>
+  <rect x="70" y="50" width="50" height="45" fill="var(--warm)" opacity=".8"/><text x="95" y="115" text-anchor="middle" class="svg-muted" font-size="12">μ₁ ↑</text>
+  <rect x="150" y="95" width="50" height="45" fill="var(--heat3)" opacity=".8"/><text x="175" y="160" text-anchor="middle" class="svg-muted" font-size="12">μ₂ ↓</text>
+  <rect x="230" y="88" width="50" height="7" fill="var(--muted)" opacity=".6"/><text x="255" y="115" text-anchor="middle" class="svg-muted" font-size="12">μ₃ ≈</text>
+  <text x="330" y="100" class="svg-ink" font-size="14">Σ ≈ 0</text>
+  <text x="470" y="60" class="svg-ink" font-size="14">偏离很大，但 Σμ 几乎不变</text>
+  <text x="470" y="88" class="svg-muted" font-size="13">→ 反传的梯度说不出"哪里异常"</text>
+  <text x="470" y="122" class="svg-ink" font-size="14">改进：用"偏离量"作分数</text>
+  <text x="470" y="148" class="svg-muted" font-size="13">KL(q(z|x)‖𝒩(0,I)) 或 Σ(μ−μˣ)²/σˣ²，复现中显著更好</text>
+</svg>
+</figure>
+
+<div class="callout warn"><b>② 论文公式、官方代码、第三方代码三种写法互不相同</b>
+论文 Eq. 2：ReLU(Σ<sub>k</sub>α<sub>k</sub>A<sub>k</sub>)；作者官方代码：把有正负号的 Σ<sub>k</sub>α<sub>k</sub>A<sub>k</sub> 先上采样再取绝对值（另有一个对排序无影响的梯度 L2 归一化）；第三方 SZU 复现：mean<sub>k</sub>|α<sub>k</sub>A<sub>k</sub>|。
+我们把官方代码原样跑通，并在同一权重、同一输入上验证了我们的实现与官方完全一致（逐图相关系数 1.0000）。三种写法的异常定位效果相差可达 0.2 AUROC，而论文只给出了效果最差的那一种。</div>
+
+<div class="callout warn"><b>③ L<sub>AD</sub> 存在退化解</b>
+若某维的 Σα<sub>k</sub>A<sub>k</sub> 处处为负，ReLU 后整张图为 0，L<sub>AD</sub> 直接等于 0——不需要真正把注意力分开。复现中网络很快学会这个捷径：被选中维度的注意力图 98–100% 是全零。
+结果：论文原版训练出的模型，维度间注意力重叠（0.44–0.56）与不加 L<sub>AD</sub> 的 FactorVAE 一样，解耦分数平均 0.665，低于基线 0.763，且种子间极不稳定（一次跌到 0.463）。
+修正（|·| 代替 ReLU + 跳过空图）后，重叠降到 0.08–0.15，确实把注意力分开了；10 维设定下解耦分数 0.828 ± 0.026，3 个种子都高于同种子基线。但按补充材料的 32 维设定，修正版平均 0.738 ± 0.096，没有超过基线（0.795），其中一个种子没有收敛——所以"修正后有效"只在部分设定下成立。论文版在两种设定下都没有把注意力分开（重叠 0.44–0.66，与不加 L<sub>AD</sub> 的 FactorVAE 相同）。</div>
+
+<div class="callout warn"><b>④ 关键细节缺失</b>
+没有说明：用哪一层特征图（MNIST、MVTec）、ResNet18 是否 ImageNet 预训练、λ 取值、每次选哪两个维度算 L<sub>AD</sub>、训练轮数。这些都会显著影响结果，是复现的主要障碍。</div>
+
+<div class="callout warn"><b>⑤ 隐含假设未必成立</b>
+"每维注意力在空间上分开 ⇒ 隐空间解耦"并不总对：dSprites 中的"大小""旋转"作用在同一物体的同一区域，注意力天然重叠；强行分开可能与真正的解耦冲突。
+复现中正好看到这一点：λ=50 把注意力分得比 λ=10 更开（重叠 0.07 vs 0.13），解耦分数却更低（0.747 vs 0.828）；32 维设定的一个种子注意力重叠只有 0.09（分得很开），解耦分数却只有 0.605，比同种子的 FactorVAE 低 0.2。</div>
+
+<div class="callout good"><b>这篇论文的价值</b>
+提出了"以隐变量为反传起点"的通用解释框架（可推广到其他生成模型，作者也提到 GAN）；并把解释性的产物反过来当作训练约束——这个"可解释性 → 训练信号"的思路被后续很多工作沿用。</div>
+
+<!-- ============================================================ -->
+<h2 id="qa">7. 汇报时可能被问的问题</h2>
+<dl class="qa">
+  <dt>Q：为什么不直接用重建误差 |x − x̂| 做异常定位？</dt>
+  <dd>论文认为重建误差会把所有重建不好的细节都标出来，注意力更集中。但复现中重建差在 UCSD、MVTec 上反而更强——这是汇报中最值得讨论的点。</dd>
+  <dt>Q：注意力图的分辨率由什么决定？</dt>
+  <dd>由所选卷积层的 h×w 决定，再上采样到输入大小。浅层分辨率高但语义弱，深层相反；UCSD 的 Table 1 就是在比较这一点。</dd>
+  <dt>Q：z 是随机采样的，注意力图稳定吗？</dt>
+  <dd>每次采样都不同。可以用 μ 代替 z，或多次采样取平均；论文把"解释整个注意力分布"留作未来工作。</dd>
+  <dt>Q：L<sub>AD</sub> 需要二阶导，代价多大？</dt>
+  <dd>每次迭代要为两个维度各做一次带 create_graph 的反传；复现中 AD-FactorVAE 整体训练时间约为 FactorVAE 的 1.4 倍。</dd>
+  <dt>Q：这个方法能用在 GAN 上吗？</dt>
+  <dd>GAN 没有编码器，无法直接得到 z；需要先做 GAN inversion 或配一个编码器（如 BiGAN），思路上可以推广。</dd>
+</dl>
+
+</main>
+</body>
+</html>

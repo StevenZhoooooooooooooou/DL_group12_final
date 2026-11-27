@@ -1,0 +1,36 @@
+train (6800, 1, 100, 100)  test (2000, 1, 100, 100)  anomalous px 0.0058
+  it   1000/10000  loss    5797.20  rec    5791.90  kl    5.30  (62s)
+  it   2000/10000  loss    5809.09  rec    5798.58  kl   10.51  (114s)
+  it   3000/10000  loss    5788.89  rec    5776.52  kl   12.37  (168s)
+  it   4000/10000  loss    5797.47  rec    5783.34  kl   14.13  (208s)
+  it   5000/10000  loss    5787.62  rec    5772.27  kl   15.35  (248s)
+  it   6000/10000  loss    5775.42  rec    5759.32  kl   16.11  (288s)
+  it   7000/10000  loss    5791.07  rec    5777.13  kl   13.94  (328s)
+  it   8000/10000  loss    5783.21  rec    5768.50  kl   14.71  (368s)
+  it   9000/10000  loss    5776.90  rec    5762.97  kl   13.93  (408s)
+  it  10000/10000  loss    5779.84  rec    5765.38  kl   14.46  (448s)
+Vanilla-VAE                  AUROC 0.906  bestIoU 0.072
+Ours(conv1,mu,relu)          AUROC 0.553  bestIoU 0.008
+Ours(conv1,mu,abs)           AUROC 0.550  bestIoU 0.008
+Ours(conv1,ndd,relu)         AUROC 0.543  bestIoU 0.008
+Ours(conv1,ndd,abs)          AUROC 0.550  bestIoU 0.008
+Ours(conv1,kl,relu)          AUROC 0.467  bestIoU 0.006
+Ours(conv1,kl,abs)           AUROC 0.556  bestIoU 0.007
+Ours(conv1,mahal,relu)       AUROC 0.463  bestIoU 0.006
+Ours(conv1,mahal,abs)        AUROC 0.506  bestIoU 0.006
+Ours(conv2,mu,relu)          AUROC 0.539  bestIoU 0.010
+Ours(conv2,mu,abs)           AUROC 0.632  bestIoU 0.010
+Ours(conv2,ndd,relu)         AUROC 0.570  bestIoU 0.009
+Ours(conv2,ndd,abs)          AUROC 0.636  bestIoU 0.010
+Ours(conv2,kl,relu)          AUROC 0.499  bestIoU 0.006
+Ours(conv2,kl,abs)           AUROC 0.892  bestIoU 0.042
+Ours(conv2,mahal,relu)       AUROC 0.457  bestIoU 0.006
+Ours(conv2,mahal,abs)        AUROC 0.862  bestIoU 0.036
+Ours(conv3,mu,relu)          AUROC 0.525  bestIoU 0.007
+Ours(conv3,mu,abs)           AUROC 0.598  bestIoU 0.008
+Ours(conv3,ndd,relu)         AUROC 0.595  bestIoU 0.010
+Ours(conv3,ndd,abs)          AUROC 0.605  bestIoU 0.008
+Ours(conv3,kl,relu)          AUROC 0.863  bestIoU 0.025
+Ours(conv3,kl,abs)           AUROC 0.863  bestIoU 0.025
+Ours(conv3,mahal,relu)       AUROC 0.731  bestIoU 0.017
+Ours(conv3,mahal,abs)        AUROC 0.757  bestIoU 0.017

@@ -1,0 +1,8 @@
+[factorvae_g40_B_notf32_s1] it 5000 rec 406.1 kl 58.18 (max 320) tc 0.212 L_AD 0.000 active 10 (201s)
+[factorvae_g40_B_notf32_s1] it 10000 rec 167.6 kl 89.96 (max 181) tc 0.413 L_AD 0.000 active 10 (423s)
+[factorvae_g40_B_notf32_s1] it 15000 rec 162.8 kl 86.68 (max 245) tc 0.347 L_AD 0.000 active 10 (667s)
+[factorvae_g40_B_notf32_s1] it 20000 rec 149.9 kl 85.91 (max 149) tc 0.722 L_AD 0.000 active 10 (898s)
+[factorvae_g40_B_notf32_s1] it 25000 rec 199.2 kl 125.15 (max 1432) tc 0.870 L_AD 0.000 active 10 (1094s)
+[factorvae_g40_B_notf32_s1] it 30000 rec 166.0 kl 82.54 (max 96) tc 0.219 L_AD 0.000 active 10 (1164s)
+[factorvae_g40_B_notf32_s1] EVAL it 30000: disentanglement 0.690  recon 148.53  active 10
+[factorvae_g40_B_notf32_s1] finished in 1177s

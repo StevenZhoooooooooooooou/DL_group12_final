@@ -1,0 +1,8 @@
+[factorvae_g40_C_deconvdefault_s1] it 5000 rec 440.0 kl 51.98 (max 238) tc 0.224 L_AD 0.000 active 10 (172s)
+[factorvae_g40_C_deconvdefault_s1] it 10000 rec 174.7 kl 69.67 (max 180) tc 0.643 L_AD 0.000 active 10 (339s)
+[factorvae_g40_C_deconvdefault_s1] it 15000 rec 143.7 kl 54.03 (max 144) tc 0.536 L_AD 0.000 active 9 (510s)
+[factorvae_g40_C_deconvdefault_s1] it 20000 rec 123.2 kl 42.48 (max 379) tc 0.243 L_AD 0.000 active 10 (705s)
+[factorvae_g40_C_deconvdefault_s1] it 25000 rec 133.8 kl 66.24 (max 3648) tc 0.292 L_AD 0.000 active 8 (878s)
+[factorvae_g40_C_deconvdefault_s1] it 30000 rec 111.1 kl 14.46 (max 21) tc 0.143 L_AD 0.000 active 4 (1053s)
+[factorvae_g40_C_deconvdefault_s1] EVAL it 30000: disentanglement 0.719  recon 105.02  active 10
+[factorvae_g40_C_deconvdefault_s1] finished in 1090s

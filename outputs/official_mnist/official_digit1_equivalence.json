@@ -1,0 +1,24 @@
+{
+  "outlier_7": {
+    "corr_official_vs_ours_abs (min, mean)": [
+      0.9999999999998279,
+      0.9999999999999765
+    ],
+    "max_rel_error_after_scale": 1.9488491886932024e-07,
+    "corr_official_vs_paper_relu (min, mean)": [
+      -0.3393912040086867,
+      0.8447675685570054
+    ]
+  },
+  "outlier_2": {
+    "corr_official_vs_ours_abs (min, mean)": [
+      0.9999999999997702,
+      0.9999999999999569
+    ],
+    "max_rel_error_after_scale": 2.534229963657708e-07,
+    "corr_official_vs_paper_relu (min, mean)": [
+      -0.37741824980027955,
+      0.3432031292480705
+    ]
+  }
+}

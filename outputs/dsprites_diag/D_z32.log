@@ -1,0 +1,8 @@
+[factorvae_g40_D_z32_s1] it 5000 rec 328.9 kl 88.03 (max 338) tc 0.304 L_AD 0.000 active 32 (193s)
+[factorvae_g40_D_z32_s1] it 10000 rec 153.5 kl 115.92 (max 163) tc 0.317 L_AD 0.000 active 32 (385s)
+[factorvae_g40_D_z32_s1] it 15000 rec 138.8 kl 81.16 (max 186) tc 0.143 L_AD 0.000 active 29 (601s)
+[factorvae_g40_D_z32_s1] it 20000 rec 113.8 kl 34.84 (max 87) tc 0.057 L_AD 0.000 active 4 (799s)
+[factorvae_g40_D_z32_s1] it 25000 rec 106.0 kl 20.49 (max 65) tc 0.013 L_AD 0.000 active 7 (999s)
+[factorvae_g40_D_z32_s1] it 30000 rec 93.3 kl 14.67 (max 42) tc 0.015 L_AD 0.000 active 4 (1132s)
+[factorvae_g40_D_z32_s1] EVAL it 30000: disentanglement 0.791  recon 85.13  active 11
+[factorvae_g40_D_z32_s1] finished in 1155s
